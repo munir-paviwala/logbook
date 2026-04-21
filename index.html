@@ -6,94 +6,264 @@ layout: default
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Archive</title>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <title>The Gully - Archive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
     <style>
+        /* --- CORE COLOR PALETTES & THEME LOGIC --- */
+        
+        :root {
+            transition: all 0.3s ease;
+        }
+
+        /* Mode 1: Gulabi Gully (Indian Textile / Main) */
+        [data-theme="gulabi"] {
+            --bg-color: #fdfaf3; /* Warm Cream */
+            --card-bg: #ffffff;
+            --text-main: #1c2379; /* Peacock Blue (Text) */
+            --text-meta: #a1a8d6; /* Muted Indigo */
+            --accent-main: #b22e5b; /* Gulabi Pink */
+            --accent-secondary: #f6c444; /* Sunshine Yellow */
+            --accent-tertiary: #d55c26; /* Deep Orange */
+            --border-color: #fce4ec; /* Soft Pink border */
+            --text-on-accent: #ffffff;
+        }
+
+        /* Mode 2: Pistachio Paradise (Green-Cream / Alternative) */
+        [data-theme="pistachio"] {
+            --bg-color: #f3f8f1; /* Pistachio Cream */
+            --card-bg: #ffffff;
+            --text-main: #2d5a3f; /* Moss Green (Text) */
+            --text-meta: #8cae98; /* Muted Lime */
+            --accent-main: #4a9e6b; /* Muted Pistachio Green */
+            --accent-secondary: #c9b149; /* Antique Gold */
+            --accent-tertiary: #92b725; /* Lime Accent */
+            --border-color: #e2efdc; /* Soft Green border */
+            --text-on-accent: #1c2379; /* Peacock Blue text for gold */
+        }
+
+        /* --- GLOBAL LAYOUT --- */
+        
         body {
-            background-color: #fdfdfd;
-            color: #2e2e2e;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            line-height: 1.7;
+            margin: 0;
+            padding: 2rem;
+            /* Subbtle Paper Texture Effect */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23e8e8e8' fill-opacity='0.1' d='M1 3h1v1H1V3zm2-2h1v1H2V1z'%3E%3C/path%3E%3C/svg%3E");
+        }
+
+        .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 2rem;
-            line-height: 1.6;
+        }
+
+        /* Friendly Fonts */
+        h1, h2, h3, h4 {
+            font-family: 'Varela Round', sans-serif;
+            font-weight: 600;
+            margin-top: 1.5rem;
         }
 
         h1 {
-            font-family: 'EB Garamond', serif;
-            font-size: 3rem;
-            border-bottom: 2px solid #e67e22;
-            padding-bottom: 0.5rem;
-            margin-bottom: 2rem;
+            font-size: 3.5rem;
+            color: var(--accent-main);
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 0px var(--accent-secondary);
+        }
+
+        /* --- THEME TOGGLE BUTTON --- */
+        
+        .theme-toggle-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .theme-btn {
+            border: none;
+            cursor: pointer;
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .theme-btn.gulabi-btn {
+            background-color: #b22e5b; /* Gulabi Pink */
+            color: white;
+        }
+
+        .theme-btn.pistachio-btn {
+            background-color: #f3f8f1; /* Pistachio */
+            color: #2d5a3f; /* Moss Green */
+            border: 2px solid #e2efdc;
+        }
+
+        .theme-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        /* --- POST COLLECTION STYLING --- */
+        
+        .sub-header {
+            color: var(--text-meta);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
         }
 
         .post-list {
             list-style: none;
             padding: 0;
+            margin: 0;
         }
 
         .post-item {
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            background: #ffffff;
+            background: var(--card-bg);
+            margin-bottom: 2.5rem;
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 2px solid var(--border-color);
             transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.03);
+            position: relative;
         }
 
+        /* That cute shadow and "piling up" effect */
         .post-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.06);
+        }
+        
+        .post-title {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.2rem;
+            line-height: 1.2;
         }
 
         .post-title a {
-            font-family: 'EB Garamond', serif;
-            font-size: 1.8rem;
-            color: #2e2e2e;
+            color: var(--accent-main);
             text-decoration: none;
-            font-weight: 600;
+            transition: color 0.2s;
         }
 
         .post-title a:hover {
-            color: #e67e22;
+            color: var(--accent-tertiary);
         }
 
         .post-meta {
-            color: #777;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
+            color: var(--text-meta);
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
-        .content-preview {
-            font-family: 'EB Garamond', serif;
+        /* CONTENT STYLING (The full blog post content) */
+        
+        .post-content {
             font-size: 1.1rem;
+            color: var(--text-main);
         }
 
-        /* Makes Spotify iframes look nice */
-        iframe {
-            border-radius: 12px;
-            margin-top: 1rem;
+        /* Basic Markdown Formatting inside the post */
+        .post-content h2, .post-content h3 { color: var(--accent-tertiary); font-size: 1.6rem; }
+        .post-content p { margin-bottom: 1.2rem; }
+        
+        /* Wholesome Blockquotes */
+        .post-content blockquote {
+            margin: 2rem 0;
+            padding: 1rem 2rem;
+            border-left: 5px solid var(--accent-secondary);
+            background-color: var(--bg-color);
+            color: var(--accent-tertiary);
+            border-radius: 8px;
+            font-style: italic;
         }
+
+        /* Smart Image Formatting (Cute corners, responsive) */
+        .post-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            display: block;
+            margin: 1.5rem auto;
+            border: 3px solid var(--border-color);
+        }
+
+        /* Secure and Nice Iframes (Spotify/YT Music) */
+        .post-content iframe {
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            display: block;
+            margin: 2rem auto;
+            border: none;
+            max-width: 100%;
+        }
+
+        /* Colorful separation lines */
+        .post-content hr {
+            border: 0;
+            height: 2px;
+            background-image: linear-gradient(to right, rgba(0,0,0,0), var(--accent-main), rgba(0,0,0,0));
+            margin: 2rem 0;
+        }
+
     </style>
 </head>
-<body>
+<body data-theme="gulabi"> <div class="theme-toggle-container">
+        <span style="font-size: 0.8rem; font-weight: 500;">Toggle Vibes:</span>
+        <button onclick="setTheme('gulabi')" class="theme-btn gulabi-btn">Gulabi Gully</button>
+        <button onclick="setTheme('pistachio')" class="theme-btn pistachio-btn">Pistachio Paradise</button>
+    </div>
 
-    <h1>The Log</h1>
+    <div class="container">
+        <h1>Gulabi Gully Log</h1>
+        <p class="sub-header">Wholesome bits, history concepts, MIDI sketches, and songs. Just me, me, me.</p>
 
-    <ul class="post-list">
-        {% for post in site.posts %}
-        <li class="post-item">
-            <div class="post-title">
-                <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
-            </div>
-            <div class="post-meta">{{ post.date | date: "%B %d, %Y" }}</div>
-            
-            <div class="content-preview">
-                {{ post.content }}
-            </div>
-        </li>
-        {% endfor %}
-    </ul>
+        <ul class="post-list">
+            {% for post in site.posts %}
+            <li class="post-item">
+                <h2 class="post-title">
+                    <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
+                </h2>
+                <div class="post-meta">{{ post.date | date: "%B %d, %Y" }}</div>
+                
+                <div class="post-content">
+                    {{ post.content }}
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+        // --- THEME MANAGEMENT SCRIPT ---
+        
+        // Function to set the theme
+        function setTheme(themeName) {
+            localStorage.setItem('munir-log-theme', themeName);
+            document.documentElement.setAttribute('data-theme', themeName);
+            document.body.setAttribute('data-theme', themeName);
+        }
+
+        // On load, apply the saved theme or default to gulabi
+        (function () {
+            const savedTheme = localStorage.getItem('munir-log-theme') || 'gulabi';
+            setTheme(savedTheme);
+        })();
+    </script>
 
 </body>
 </html>
