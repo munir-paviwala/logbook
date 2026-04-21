@@ -3,91 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Studio - Editor</title>
+    <title>The Gully - Editor</title>
     <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
     <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     
     <style>
+        /* --- CORE COLOR PALETTES & THEME LOGIC --- */
+        
         :root {
-            --bg-color: #fdfdfd;
-            --text-color: #2e2e2e;
-            --accent-color: #e67e22;
-            --ui-bg: #ffffff;
-            --border-color: #e0e0e0;
+            transition: all 0.3s ease;
         }
 
+        /* Mode 1: Gulabi Gully (Indian Textile / Main) */
+        [data-theme="gulabi"] {
+            --bg-color: #fdfaf3; /* Warm Cream */
+            --editor-bg: #ffffff;
+            --text-main: #1c2379; /* Peacock Blue (Text) */
+            --text-meta: #a1a8d6; /* Muted Indigo */
+            --accent-main: #b22e5b; /* Gulabi Pink */
+            --accent-secondary: #f6c444; /* Sunshine Yellow */
+            --accent-tertiary: #d55c26; /* Deep Orange */
+            --border-color: #fce4ec; /* Soft Pink border */
+            
+            /* EasyMDE UI Specifics (Gulabi) */
+            --mde-toolbar-bg: #f5f5f5;
+            --mde-toolbar-icon: #b22e5b; /* The buttons are now Gulabi Pink */
+            --mde-toolbar-hover: #fce4ec;
+            --mde-border: #fce4ec;
+        }
+
+        /* Mode 2: Pistachio Paradise (Green-Cream / Alternative) */
+        [data-theme="pistachio"] {
+            --bg-color: #f3f8f1; /* Pistachio Cream */
+            --editor-bg: #ffffff;
+            --text-main: #2d5a3f; /* Moss Green (Text) */
+            --text-meta: #8cae98; /* Muted Lime */
+            --accent-main: #4a9e6b; /* Muted Pistachio Green */
+            --accent-secondary: #c9b149; /* Antique Gold */
+            --accent-tertiary: #92b725; /* Lime Accent */
+            --border-color: #e2efdc; /* Soft Green border */
+            
+            /* EasyMDE UI Specifics (Pistachio) */
+            --mde-toolbar-bg: #e2efdc;
+            --mde-toolbar-icon: #2d5a3f; /* The buttons are now Moss Green */
+            --mde-toolbar-hover: #f3f8f1;
+            --mde-border: #e2efdc;
+        }
+
+        /* --- GLOBAL LAYOUT --- */
+        
         body {
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--text-main);
             font-family: 'Inter', sans-serif;
-            max-width: 1000px;
-            margin: 0 auto;
+            font-weight: 400;
+            line-height: 1.7;
+            margin: 0;
             padding: 2rem;
+            /* Subbtle Paper Texture Effect */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23e8e8e8' fill-opacity='0.1' d='M1 3h1v1H1V3zm2-2h1v1H2V1z'%3E%3C/path%3E%3C/svg%3E");
+        }
+
+        .container {
+            max-width: 1000px; /* Wider for the editor */
+            margin: 0 auto;
+        }
+
+        /* Friendly Fonts */
+        h1, h2, h3, h4 {
+            font-family: 'Varela Round', sans-serif;
+            font-weight: 600;
+            margin-top: 1rem;
         }
 
         h1 {
-            font-family: 'EB Garamond', serif;
+            font-size: 3rem;
+            color: var(--accent-main);
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 0px var(--accent-secondary);
         }
 
+        /* --- THEME TOGGLE BUTTON (Same as Index) --- */
+        
+        .theme-toggle-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            z-index: 1000; /* stays on top */
+        }
+
+        .theme-btn {
+            border: none;
+            cursor: pointer;
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .theme-btn.gulabi-btn {
+            background-color: #b22e5b; /* Gulabi Pink */
+            color: white;
+        }
+
+        .theme-btn.pistachio-btn {
+            background-color: #f3f8f1; /* Pistachio */
+            color: #2d5a3f; /* Moss Green */
+            border: 2px solid #e2efdc;
+        }
+
+        .theme-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        /* --- EDITOR CONTROLS --- */
+        
         .controls {
             display: flex;
             gap: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             align-items: center;
         }
 
         input[type="text"] {
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
             font-family: 'Inter', sans-serif;
             flex: 1;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            background-color: var(--editor-bg);
+            color: var(--text-main);
+            transition: border-color 0.2s;
         }
 
-        button {
-            background-color: var(--accent-color);
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-secondary);
+        }
+
+        .download-btn {
+            background-color: var(--accent-tertiary); /* Deep Orange / Lime Gold */
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
+            padding: 1rem 2rem;
+            border-radius: 12px;
             cursor: pointer;
+            font-family: 'Varela Round', sans-serif;
             font-weight: 600;
-            transition: opacity 0.2s;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        button:hover {
-            opacity: 0.8;
+        .download-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
 
-        /* Customize the editor to feel warm */
-        .editor-toolbar { border-color: var(--border-color); background: var(--ui-bg); }
-        .CodeMirror { border-color: var(--border-color); background: var(--ui-bg); font-family: 'Inter', monospace; }
-        .editor-preview { background: var(--bg-color); font-family: 'EB Garamond', serif; font-size: 1.1rem; line-height: 1.6;}
+        /* --- EasyMDE VISIBILITY FIX & CUSTOM STYLING --- */
+        
+        /* 1. Main Border Fix */
+        .CodeMirror {
+            border: 2px solid var(--mde-border) !important;
+            border-radius: 0 0 12px 12px !important;
+            background-color: var(--editor-bg) !important;
+            font-family: 'Inter', monospace;
+            font-size: 1.1rem;
+            color: var(--text-main) !important;
+        }
+
+        /* 2. Toolbar Visibility Fix (The Main Request) */
+        .editor-toolbar {
+            border: 2px solid var(--mde-border) !important;
+            border-bottom: none !important;
+            border-radius: 12px 12px 0 0 !important;
+            background-color: var(--mde-toolbar-bg) !important;
+            padding: 10px !important;
+        }
+
+        /* 3. Toolbar Icons Visibility (Force Color) */
+        .editor-toolbar button {
+            color: var(--mde-toolbar-icon) !important; /* Force visibility */
+            transition: background 0.2s;
+            opacity: 1 !important; /* Force opacity */
+            border: 1px solid transparent !important;
+        }
+
+        /* 4. Toolbar Hover State */
+        .editor-toolbar button:hover {
+            background-color: var(--mde-toolbar-hover) !important;
+            border-color: var(--mde-border) !important;
+        }
+        
+        /* 5. active button state */
+        .editor-toolbar button.active {
+            background-color: var(--bg-color) !important;
+            border-color: var(--mde-border) !important;
+        }
+
+        /* Split-pane Preview Styling (Must match Index) */
+        .editor-preview {
+            background-color: var(--bg-color) !important;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main) !important;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            padding: 2.5rem;
+        }
+        
+        /* Applying same content styling as index to the preview */
+        .editor-preview h1, .editor-preview h2, .editor-preview h3 { font-family: 'Varela Round', sans-serif; color: var(--accent-main); }
+        .editor-preview blockquote { border-left: 5px solid var(--accent-secondary); background: var(--editor-bg); }
+        .editor-preview img { max-width: 100%; border-radius: 12px; border: 3px solid var(--border-color); margin: 1.5rem auto; display: block; }
+        .editor-preview iframe { border-radius: 12px; margin: 2rem auto; display: block; border: none; max-width: 100%; }
+        .editor-preview hr { border: 0; height: 2px; background-image: linear-gradient(to right, rgba(0,0,0,0), var(--accent-main), rgba(0,0,0,0)); margin: 2rem 0; }
+
     </style>
 </head>
-<body>
-
-    <h1>Draft a New Log</h1>
-
-    <div class="controls">
-        <input type="text" id="postTitle" placeholder="Post Title (e.g., A Concept of History & A New MIDI Track)">
-        <button onclick="downloadMarkdown()" id="downloadBtn">Download Post</button>
+<body data-theme="gulabi"> <div class="theme-toggle-container">
+        <span style="font-size: 0.8rem; font-weight: 500;">Toggle Studio Vibes:</span>
+        <button onclick="setTheme('gulabi')" class="theme-btn gulabi-btn">Gulabi Gully</button>
+        <button onclick="setTheme('pistachio')" class="theme-btn pistachio-btn">Pistachio Paradise</button>
     </div>
 
-    <textarea id="my-editor"></textarea>
+    <div class="container">
+        <h1>Draft a New Log</h1>
+
+        <div class="controls">
+            <input type="text" id="postTitle" placeholder="Post Title (e.g., A Concept of History & A New MIDI Track)">
+            <button onclick="downloadMarkdown()" class="download-btn">Download Post</button>
+        </div>
+
+        <textarea id="my-editor"></textarea>
+    </div>
 
     <script>
-        // Initialize the split-pane editor
+        // --- EasyMDE INITIALIZATION ---
+        
         const easymde = new EasyMDE({ 
             element: document.getElementById('my-editor'),
             spellChecker: false,
+            // Add custom icons if needed, but defaults are now visible
             placeholder: "What's the update this week? Drop a history concept, some pixel art, or a Spotify iframe here...",
             renderingConfig: { singleLineBreaks: false, codeSyntaxHighlighting: true }
         });
 
+        // --- DOWNLOAD LOGIC ---
+        
         function downloadMarkdown() {
             const title = document.getElementById('postTitle').value;
             const content = easymde.value();
@@ -97,7 +269,7 @@
                 return;
             }
 
-            // Get local date nicely formatted as YYYY-MM-DD
+            // Get local date formatted as YYYY-MM-DD
             const now = new Date();
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -111,7 +283,7 @@
             // Add Jekyll frontmatter
             const fileContent = `---\nlayout: post\ntitle: "${title}"\ndate: ${date}\n---\n\n${content}`;
             
-            // Create a blob and trigger download
+            // Create blob and trigger download
             const blob = new Blob([fileContent], { type: 'text/markdown' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -123,6 +295,20 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
+
+        // --- THEME MANAGEMENT SCRIPT (Synced with Index) ---
+        
+        function setTheme(themeName) {
+            localStorage.setItem('munir-log-theme', themeName);
+            document.documentElement.setAttribute('data-theme', themeName);
+            document.body.setAttribute('data-theme', themeName);
+        }
+
+        // On load, apply saved theme or default to gulabi
+        (function () {
+            const savedTheme = localStorage.getItem('munir-log-theme') || 'gulabi';
+            setTheme(savedTheme);
+        })();
     </script>
 </body>
 </html>
