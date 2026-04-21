@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Studio - Editor</title>
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #fdfdfd;
+            --text-color: #2e2e2e;
+            --accent-color: #e67e22;
+            --ui-bg: #ffffff;
+            --border-color: #e0e0e0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-family: 'EB Garamond', serif;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            flex: 1;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        /* Customize the editor to feel warm */
+        .editor-toolbar { border-color: var(--border-color); background: var(--ui-bg); }
+        .CodeMirror { border-color: var(--border-color); background: var(--ui-bg); font-family: 'Inter', monospace; }
+        .editor-preview { background: var(--bg-color); font-family: 'EB Garamond', serif; font-size: 1.1rem; line-height: 1.6;}
+    </style>
+</head>
+<body>
+
+    <h1>Draft a New Log</h1>
+
+    <div class="controls">
+        <input type="text" id="postTitle" placeholder="Post Title (e.g., A Concept of History & A New MIDI Track)">
+        <button onclick="downloadMarkdown()" id="downloadBtn">Download Post</button>
+    </div>
+
+    <textarea id="my-editor"></textarea>
+
+    <script>
+        // Initialize the split-pane editor
+        const easymde = new EasyMDE({ 
+            element: document.getElementById('my-editor'),
+            spellChecker: false,
+            placeholder: "What's the update this week? Drop a history concept, some pixel art, or a Spotify iframe here...",
+            renderingConfig: { singleLineBreaks: false, codeSyntaxHighlighting: true }
+        });
+
+        function downloadMarkdown() {
+            const title = document.getElementById('postTitle').value;
+            const content = easymde.value();
+
+            if (!title || !content) {
+                alert("Please add a title and some content before downloading.");
+                return;
+            }
+
+            // Get local date nicely formatted as YYYY-MM-DD
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const date = `${year}-${month}-${day}`;
+
+            // Create a clean filename: YYYY-MM-DD-title.md
+            const cleanTitle = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            const filename = `${date}-${cleanTitle}.md`;
+
+            // Add Jekyll frontmatter
+            const fileContent = `---\nlayout: post\ntitle: "${title}"\ndate: ${date}\n---\n\n${content}`;
+            
+            // Create a blob and trigger download
+            const blob = new Blob([fileContent], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
