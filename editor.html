@@ -3,237 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Gully - Editor</title>
+    <title>The Studio - Editor</title>
     <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
     <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Varela+Round&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     
     <style>
         /* --- CORE COLOR PALETTES & THEME LOGIC --- */
-        
-        :root {
-            transition: all 0.3s ease;
-        }
+        :root { transition: all 0.3s ease; }
 
-        /* Mode 1: Gulabi Gully (Indian Textile / Main) */
         [data-theme="gulabi"] {
-            --bg-color: #fdfaf3; /* Warm Cream */
-            --editor-bg: #ffffff;
-            --text-main: #1c2379; /* Peacock Blue (Text) */
-            --text-meta: #a1a8d6; /* Muted Indigo */
-            --accent-main: #b22e5b; /* Gulabi Pink */
-            --accent-secondary: #f6c444; /* Sunshine Yellow */
-            --accent-tertiary: #d55c26; /* Deep Orange */
-            --border-color: #fce4ec; /* Soft Pink border */
-            
-            /* EasyMDE UI Specifics (Gulabi) */
-            --mde-toolbar-bg: #f5f5f5;
-            --mde-toolbar-icon: #b22e5b; /* The buttons are now Gulabi Pink */
-            --mde-toolbar-hover: #fce4ec;
-            --mde-border: #fce4ec;
+            --bg-color: #fdfaf3; --editor-bg: #ffffff; --text-main: #1c2379; --text-meta: #a1a8d6;
+            --accent-main: #b22e5b; --accent-secondary: #f6c444; --accent-tertiary: #d55c26; --border-color: #fce4ec;
+            --mde-toolbar-bg: #f5f5f5; --mde-toolbar-icon: #b22e5b; --mde-toolbar-hover: #fce4ec; --mde-border: #fce4ec;
         }
 
-        /* Mode 2: Pistachio Paradise (Green-Cream / Alternative) */
         [data-theme="pistachio"] {
-            --bg-color: #f3f8f1; /* Pistachio Cream */
-            --editor-bg: #ffffff;
-            --text-main: #2d5a3f; /* Moss Green (Text) */
-            --text-meta: #8cae98; /* Muted Lime */
-            --accent-main: #4a9e6b; /* Muted Pistachio Green */
-            --accent-secondary: #c9b149; /* Antique Gold */
-            --accent-tertiary: #92b725; /* Lime Accent */
-            --border-color: #e2efdc; /* Soft Green border */
-            
-            /* EasyMDE UI Specifics (Pistachio) */
-            --mde-toolbar-bg: #e2efdc;
-            --mde-toolbar-icon: #2d5a3f; /* The buttons are now Moss Green */
-            --mde-toolbar-hover: #f3f8f1;
-            --mde-border: #e2efdc;
+            --bg-color: #f3f8f1; --editor-bg: #ffffff; --text-main: #2d5a3f; --text-meta: #8cae98;
+            --accent-main: #4a9e6b; --accent-secondary: #c9b149; --accent-tertiary: #92b725; --border-color: #e2efdc;
+            --mde-toolbar-bg: #e2efdc; --mde-toolbar-icon: #2d5a3f; --mde-toolbar-hover: #f3f8f1; --mde-border: #e2efdc;
         }
 
         /* --- GLOBAL LAYOUT --- */
-        
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            font-weight: 400;
-            line-height: 1.7;
-            margin: 0;
-            padding: 2rem;
-            /* Subbtle Paper Texture Effect */
+            background-color: var(--bg-color); color: var(--text-main); font-family: 'Inter', sans-serif;
+            line-height: 1.7; margin: 0; padding: 2rem;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23e8e8e8' fill-opacity='0.1' d='M1 3h1v1H1V3zm2-2h1v1H2V1z'%3E%3C/path%3E%3C/svg%3E");
         }
 
-        .container {
-            max-width: 1000px; /* Wider for the editor */
-            margin: 0 auto;
-        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1, h2, h3, h4 { font-family: 'Varela Round', sans-serif; font-weight: 600; margin-top: 1rem; }
+        h1 { font-size: 3rem; color: var(--accent-main); margin-bottom: 2rem; text-shadow: 2px 2px 0px var(--accent-secondary); }
 
-        /* Friendly Fonts */
-        h1, h2, h3, h4 {
-            font-family: 'Varela Round', sans-serif;
-            font-weight: 600;
-            margin-top: 1rem;
+        /* --- SNEAKY THEME TOGGLE --- */
+        .theme-hover-area {
+            position: fixed; top: 0; right: 0; padding: 1.5rem; z-index: 1000; opacity: 0; transition: opacity 0.3s ease;
         }
-
-        h1 {
-            font-size: 3rem;
-            color: var(--accent-main);
-            margin-bottom: 2rem;
-            text-shadow: 2px 2px 0px var(--accent-secondary);
-        }
-
-        /* --- THEME TOGGLE BUTTON (Same as Index) --- */
-        
+        .theme-hover-area:hover { opacity: 1; }
         .theme-toggle-container {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            z-index: 1000; /* stays on top */
+            display: flex; gap: 8px; background: var(--editor-bg); padding: 8px; border-radius: 30px;
+            border: 2px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-
-        .theme-btn {
-            border: none;
-            cursor: pointer;
-            padding: 0.8rem 1.2rem;
-            border-radius: 50px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .theme-btn.gulabi-btn {
-            background-color: #b22e5b; /* Gulabi Pink */
-            color: white;
-        }
-
-        .theme-btn.pistachio-btn {
-            background-color: #f3f8f1; /* Pistachio */
-            color: #2d5a3f; /* Moss Green */
-            border: 2px solid #e2efdc;
-        }
-
-        .theme-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
+        .theme-btn { width: 20px; height: 20px; border-radius: 50%; border: none; cursor: pointer; transition: transform 0.2s; }
+        .theme-btn.gulabi-btn { background-color: #b22e5b; }
+        .theme-btn.pistachio-btn { background-color: #4a9e6b; }
+        .theme-btn:hover { transform: scale(1.3); }
 
         /* --- EDITOR CONTROLS --- */
-        
-        .controls {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            align-items: center;
-        }
-
+        .controls { display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: center; }
         input[type="text"] {
-            padding: 1rem;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            font-family: 'Inter', sans-serif;
-            flex: 1;
-            font-size: 1.1rem;
-            background-color: var(--editor-bg);
-            color: var(--text-main);
-            transition: border-color 0.2s;
+            padding: 1rem; border: 2px solid var(--border-color); border-radius: 12px;
+            font-family: 'Inter', sans-serif; flex: 1; font-size: 1.1rem;
+            background-color: var(--editor-bg); color: var(--text-main); transition: border-color 0.2s;
         }
-
-        input[type="text"]:focus {
-            outline: none;
-            border-color: var(--accent-secondary);
-        }
-
+        input[type="text"]:focus { outline: none; border-color: var(--accent-secondary); }
         .download-btn {
-            background-color: var(--accent-tertiary); /* Deep Orange / Lime Gold */
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            cursor: pointer;
-            font-family: 'Varela Round', sans-serif;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background-color: var(--accent-tertiary); color: white; border: none; padding: 1rem 2rem;
+            border-radius: 12px; cursor: pointer; font-family: 'Varela Round', sans-serif; font-weight: 600;
+            font-size: 1.1rem; transition: all 0.2s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
+        .download-btn:hover { transform: scale(1.03); }
 
-        .download-btn:hover {
-            transform: scale(1.03);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-
-        /* --- EasyMDE VISIBILITY FIX & CUSTOM STYLING --- */
+        /* --- EasyMDE FIXES --- */
+        .CodeMirror { border: 2px solid var(--mde-border) !important; border-radius: 0 0 12px 12px !important; background-color: var(--editor-bg) !important; font-family: 'Inter', monospace; font-size: 1.1rem; color: var(--text-main) !important; }
+        .editor-toolbar { border: 2px solid var(--mde-border) !important; border-bottom: none !important; border-radius: 12px 12px 0 0 !important; background-color: var(--mde-toolbar-bg) !important; padding: 10px !important; }
+        .editor-toolbar button { color: var(--mde-toolbar-icon) !important; opacity: 1 !important; border: 1px solid transparent !important; }
+        .editor-toolbar button:hover { background-color: var(--mde-toolbar-hover) !important; border-color: var(--mde-border) !important; }
+        .editor-toolbar button.active { background-color: var(--bg-color) !important; border-color: var(--mde-border) !important; }
         
-        /* 1. Main Border Fix */
-        .CodeMirror {
-            border: 2px solid var(--mde-border) !important;
-            border-radius: 0 0 12px 12px !important;
-            background-color: var(--editor-bg) !important;
-            font-family: 'Inter', monospace;
-            font-size: 1.1rem;
-            color: var(--text-main) !important;
-        }
-
-        /* 2. Toolbar Visibility Fix (The Main Request) */
-        .editor-toolbar {
-            border: 2px solid var(--mde-border) !important;
-            border-bottom: none !important;
-            border-radius: 12px 12px 0 0 !important;
-            background-color: var(--mde-toolbar-bg) !important;
-            padding: 10px !important;
-        }
-
-        /* 3. Toolbar Icons Visibility (Force Color) */
-        .editor-toolbar button {
-            color: var(--mde-toolbar-icon) !important; /* Force visibility */
-            transition: background 0.2s;
-            opacity: 1 !important; /* Force opacity */
-            border: 1px solid transparent !important;
-        }
-
-        /* 4. Toolbar Hover State */
-        .editor-toolbar button:hover {
-            background-color: var(--mde-toolbar-hover) !important;
-            border-color: var(--mde-border) !important;
-        }
-        
-        /* 5. active button state */
-        .editor-toolbar button.active {
-            background-color: var(--bg-color) !important;
-            border-color: var(--mde-border) !important;
-        }
-
-        /* Split-pane Preview Styling (Must match Index) */
-        .editor-preview {
-            background-color: var(--bg-color) !important;
-            font-family: 'Inter', sans-serif;
-            color: var(--text-main) !important;
-            font-size: 1.1rem;
-            line-height: 1.7;
-            padding: 2.5rem;
-        }
-        
-        /* Applying same content styling as index to the preview */
+        .editor-preview { background-color: var(--bg-color) !important; font-family: 'Inter', sans-serif; color: var(--text-main) !important; font-size: 1.1rem; padding: 2.5rem; }
         .editor-preview h1, .editor-preview h2, .editor-preview h3 { font-family: 'Varela Round', sans-serif; color: var(--accent-main); }
-        .editor-preview blockquote { border-left: 5px solid var(--accent-secondary); background: var(--editor-bg); }
-        .editor-preview img { max-width: 100%; border-radius: 12px; border: 3px solid var(--border-color); margin: 1.5rem auto; display: block; }
+        .editor-preview blockquote { border-left: 5px solid var(--accent-secondary); background: var(--editor-bg); padding: 1rem 2rem; margin: 2rem 0; border-radius: 8px; font-style: italic;}
+        .editor-preview figure { margin: 2rem 0; text-align: center; }
+        .editor-preview img { max-width: 100%; border-radius: 12px; border: 3px solid var(--border-color); display: block; margin: 0 auto; }
+        .editor-preview figcaption { margin-top: 0.5rem; font-size: 0.95rem; color: var(--text-meta); font-style: italic; }
         .editor-preview iframe { border-radius: 12px; margin: 2rem auto; display: block; border: none; max-width: 100%; }
         .editor-preview hr { border: 0; height: 2px; background-image: linear-gradient(to right, rgba(0,0,0,0), var(--accent-main), rgba(0,0,0,0)); margin: 2rem 0; }
 
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .controls { flex-direction: column; align-items: stretch; gap: 0.8rem; }
+            input[type="text"] { width: auto; }
+            .download-btn { width: 100%; }
+            .theme-hover-area { opacity: 0.5; padding: 1rem; }
+            .theme-hover-area:hover, .theme-hover-area:active { opacity: 1; }
+        }
     </style>
 </head>
-<body data-theme="gulabi"> <div class="theme-toggle-container">
-        <span style="font-size: 0.8rem; font-weight: 500;">Toggle Studio Vibes:</span>
-        <button onclick="setTheme('gulabi')" class="theme-btn gulabi-btn">Gulabi Gully</button>
-        <button onclick="setTheme('pistachio')" class="theme-btn pistachio-btn">Pistachio Paradise</button>
+<body data-theme="gulabi">
+
+    <div class="theme-hover-area" title="Change Theme">
+        <div class="theme-toggle-container">
+            <button onclick="setTheme('gulabi')" class="theme-btn gulabi-btn" title="Gulabi Gully"></button>
+            <button onclick="setTheme('pistachio')" class="theme-btn pistachio-btn" title="Pistachio Paradise"></button>
+        </div>
     </div>
 
     <div class="container">
@@ -248,42 +113,60 @@
     </div>
 
     <script>
-        // --- EasyMDE INITIALIZATION ---
-        
+        // --- EasyMDE INITIALIZATION WITH CUSTOM MACROS ---
         const easymde = new EasyMDE({ 
             element: document.getElementById('my-editor'),
             spellChecker: false,
-            // Add custom icons if needed, but defaults are now visible
             placeholder: "What's the update this week? Drop a history concept, some pixel art, or a Spotify iframe here...",
-            renderingConfig: { singleLineBreaks: false, codeSyntaxHighlighting: true }
+            renderingConfig: { singleLineBreaks: false, codeSyntaxHighlighting: true },
+            toolbar: [
+                "bold", "italic", "heading", "|", 
+                "quote", "unordered-list", "ordered-list", "|", 
+                "link", 
+                {
+                    name: "custom-image",
+                    action: function drawImageMacro(editor){
+                        const cm = editor.codemirror;
+                        // The cute image + caption template
+                        const output = `\n<figure>\n  <img src="PASTE_IMAGE_URL_HERE" alt="Image description">\n  <figcaption>📸 Replace this with your wholesome caption</figcaption>\n</figure>\n`;
+                        cm.replaceSelection(output);
+                    },
+                    className: "fa fa-picture-o",
+                    title: "Insert Cute Image Template",
+                },
+                {
+                    name: "custom-iframe",
+                    action: function drawIframeMacro(editor){
+                        const cm = editor.codemirror;
+                        // The padded, bordered iframe template for music
+                        const output = `\n<div style="padding: 10px; background: var(--editor-bg); border: 2px dashed var(--border-color); border-radius: 16px; margin: 20px 0;">\n  \n  <iframe src="PASTE_EMBED_URL_HERE" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>\n</div>\n`;
+                        cm.replaceSelection(output);
+                    },
+                    className: "fa fa-headphones",
+                    title: "Insert Music Iframe Wrapper",
+                },
+                "|", "preview", "side-by-side", "fullscreen"
+            ]
         });
 
         // --- DOWNLOAD LOGIC ---
-        
         function downloadMarkdown() {
             const title = document.getElementById('postTitle').value;
             const content = easymde.value();
 
-            if (!title || !content) {
-                alert("Please add a title and some content before downloading.");
-                return;
-            }
+            if (!title || !content) { alert("Please add a title and some content before downloading."); return; }
 
-            // Get local date formatted as YYYY-MM-DD
             const now = new Date();
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const day = String(now.getDate()).padStart(2, '0');
             const date = `${year}-${month}-${day}`;
 
-            // Create a clean filename: YYYY-MM-DD-title.md
             const cleanTitle = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
             const filename = `${date}-${cleanTitle}.md`;
 
-            // Add Jekyll frontmatter
             const fileContent = `---\nlayout: post\ntitle: "${title}"\ndate: ${date}\n---\n\n${content}`;
             
-            // Create blob and trigger download
             const blob = new Blob([fileContent], { type: 'text/markdown' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -296,15 +179,12 @@
             URL.revokeObjectURL(url);
         }
 
-        // --- THEME MANAGEMENT SCRIPT (Synced with Index) ---
-        
+        // --- THEME MANAGEMENT SCRIPT ---
         function setTheme(themeName) {
             localStorage.setItem('munir-log-theme', themeName);
             document.documentElement.setAttribute('data-theme', themeName);
             document.body.setAttribute('data-theme', themeName);
         }
-
-        // On load, apply saved theme or default to gulabi
         (function () {
             const savedTheme = localStorage.getItem('munir-log-theme') || 'gulabi';
             setTheme(savedTheme);
