@@ -1,0 +1,99 @@
+---
+layout: default
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Archive</title>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fdfdfd;
+            color: #2e2e2e;
+            font-family: 'Inter', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        h1 {
+            font-family: 'EB Garamond', serif;
+            font-size: 3rem;
+            border-bottom: 2px solid #e67e22;
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .post-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .post-item {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #ffffff;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .post-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .post-title a {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.8rem;
+            color: #2e2e2e;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .post-title a:hover {
+            color: #e67e22;
+        }
+
+        .post-meta {
+            color: #777;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .content-preview {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.1rem;
+        }
+
+        /* Makes Spotify iframes look nice */
+        iframe {
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>The Log</h1>
+
+    <ul class="post-list">
+        {% for post in site.posts %}
+        <li class="post-item">
+            <div class="post-title">
+                <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
+            </div>
+            <div class="post-meta">{{ post.date | date: "%B %d, %Y" }}</div>
+            
+            <div class="content-preview">
+                {{ post.content }}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>
