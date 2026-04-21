@@ -8,6 +8,6 @@ I like how this is going.
 
 
 <figure>
-  <img src="assets/image/rajai_opp.gif" alt="Rajai image">
+  <img src="/assets/image/rajai_opp.gif" alt="Rajai image">
   <figcaption> Made this art piece to show this colorful rajai image </figcaption>
 </figure>
