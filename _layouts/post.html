@@ -75,5 +75,57 @@
             setTheme(savedTheme);
         })();
     </script>
+    <div id="admin-tools" style="display: none; margin: 20px 0; padding: 15px; border: 1px dashed #666; background: #f9f9f9;">
+  <button id="email-copy-btn" style="font-family: monospace; cursor: pointer; padding: 10px; background: #000; color: #fff; border: none;">
+    ⚡ Copy HTML for Gmail
+  </button>
+</div>
+
+<script>
+  // 2. The Secret Trigger: Click the Post Title 5 times to reveal
+  let clickCount = 0;
+  const titleElement = document.querySelector('h1') || document.querySelector('.post-title');
+
+  if (titleElement) {
+    titleElement.addEventListener('click', () => {
+      clickCount++;
+      if (clickCount === 5) {
+        const secret = prompt("Enter Secret Code:");
+        if (secret === "logbook") { // Change "logbook" to your preferred password
+          document.getElementById('admin-tools').style.display = 'block';
+          alert("Admin Tools Unlocked.");
+        }
+        clickCount = 0; // Reset
+      }
+    });
+  }
+
+  // 3. The "What Happens Next" Logic
+  document.getElementById('email-copy-btn').addEventListener('click', async function() {
+      // Change '.post-content' to whatever class wraps your actual blog text
+      const content = document.querySelector('.post-content'); 
+      if (!content) return alert("Content wrapper not found!");
+
+      const clone = content.cloneNode(true);
+
+      // CSS INLINING: This is the 'magic' that keeps your style in Gmail
+      // Add your Logbook-specific styles below in the 'style' attribute
+      const emailWrapper = document.createElement('div');
+      emailWrapper.setAttribute('style', "font-family: 'Courier New', Courier, monospace; color: #1a1a1a; line-height: 1.6; max-width: 600px; margin: auto;");
+      
+      emailWrapper.appendChild(clone);
+
+      // Convert to Clipboard Item (Browser sends it as HTML, not just text)
+      const blob = new Blob([emailWrapper.outerHTML], { type: "text/html" });
+      const data = [new ClipboardItem({ "text/html": blob })];
+
+      try {
+        await navigator.clipboard.write(data);
+        alert("Formatted HTML is now on your clipboard. Go to Gmail and Paste (Ctrl+V)!");
+      } catch (err) {
+        alert("Failed to copy. Make sure you are on HTTPS.");
+      }
+  });
+</script>
 </body>
 </html>
