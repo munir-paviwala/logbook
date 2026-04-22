@@ -75,57 +75,122 @@
             setTheme(savedTheme);
         })();
     </script>
-    <div id="admin-tools" style="display: none; margin: 20px 0; padding: 15px; border: 1px dashed #666; background: #f9f9f9;">
-  <button id="email-copy-btn" style="font-family: monospace; cursor: pointer; padding: 10px; background: #000; color: #fff; border: none;">
-    ⚡ Copy HTML for Gmail
-  </button>
+    <div id="admin-tools" style="display: none; margin: 20px auto; max-width: 800px; padding: 15px; border: 2px dashed #666; background: #f9f9f9; text-align: center; border-radius: 10px;">
+    <button id="email-copy-btn" style="font-family: monospace; font-size: 16px; cursor: pointer; padding: 12px 24px; background: #000; color: #fff; border: none; border-radius: 5px;">
+        ⚡ Copy HTML for Gmail (Inlines Current Theme)
+    </button>
 </div>
 
 <script>
-  // 2. The Secret Trigger: Click the Post Title 5 times to reveal
-  let clickCount = 0;
-  const titleElement = document.querySelector('h1') || document.querySelector('.post-title');
+// 1. The Secret Trigger
+let clickCount = 0;
+const titleElement = document.querySelector('h1.post-title');
 
-  if (titleElement) {
+if (titleElement) {
     titleElement.addEventListener('click', () => {
-      clickCount++;
-      if (clickCount === 5) {
-        const secret = prompt("Enter Secret Code:");
-        if (secret === "email") { // Change "email" to your preferred pss
-          document.getElementById('admin-tools').style.display = 'block';
-          alert("Admin Tools Unlocked.");
+        clickCount++;
+        if (clickCount === 5) {
+            const secret = prompt("Enter Secret Code:");
+            if (secret === "email") {
+                document.getElementById('admin-tools').style.display = 'block';
+                alert("Admin Tools Unlocked.");
+            }
+            clickCount = 0;
         }
-        clickCount = 0; // Reset
-      }
     });
-  }
+}
 
-  // 3. The "What Happens Next" Logic
-  document.getElementById('email-copy-btn').addEventListener('click', async function() {
-      // Change '.post-content' to whatever class wraps your actual blog text
-      const content = document.querySelector('.post-content'); 
-      if (!content) return alert("Content wrapper not found!");
+// 2. The Theme Inliner & Copier
+document.getElementById('email-copy-btn').addEventListener('click', async function() {
+    // Hardcoded color dictionaries for Gmail compatibility
+    const themes = {
+        gulabi: { bg: "#fdfaf3", card: "#ffffff", textMain: "#1c2379", textMeta: "#a1a8d6", accentMain: "#b22e5b", accentSec: "#f6c444", accentTer: "#d55c26", border: "#fce4ec" },
+        pistachio: { bg: "#f3f8f1", card: "#ffffff", textMain: "#2d5a3f", textMeta: "#8cae98", accentMain: "#4a9e6b", accentSec: "#c9b149", accentTer: "#92b725", border: "#e2efdc" }
+    };
 
-      const clone = content.cloneNode(true);
+    // Detect which theme is active on the page right now
+    const currentThemeName = document.documentElement.getAttribute('data-theme') || 'gulabi';
+    const colors = themes[currentThemeName];
 
-      // CSS INLINING: This is the 'magic' that keeps your style in Gmail
-      // Add your Logbook-specific styles below in the 'style' attribute
-      const emailWrapper = document.createElement('div');
-      emailWrapper.setAttribute('style', "font-family: 'Courier New', Courier, monospace; color: #1a1a1a; line-height: 1.6; max-width: 600px; margin: auto;");
-      
-      emailWrapper.appendChild(clone);
+    // Grab the entire card container
+    const container = document.querySelector('.container');
+    if (!container) return alert("Container not found!");
 
-      // Convert to Clipboard Item (Browser sends it as HTML, not just text)
-      const blob = new Blob([emailWrapper.outerHTML], { type: "text/html" });
-      const data = [new ClipboardItem({ "text/html": blob })];
+    const clone = container.cloneNode(true);
 
-      try {
+    // Remove the Back button from the email draft
+    const backBtn = clone.querySelector('.nav-back');
+    if (backBtn) backBtn.remove();
+
+    // --- APPLY INLINE STYLES FOR GMAIL ---
+    // Note: External fonts like Varela/Inter might get blocked by Gmail, so we add Helvetica/Arial fallbacks.
+
+    // 1. The Main Card
+    clone.setAttribute('style', `background: ${colors.card}; color: ${colors.textMain}; font-family: 'Inter', Helvetica, Arial, sans-serif; line-height: 1.7; padding: 30px; border-radius: 20px; border: 2px solid ${colors.border}; max-width: 800px; margin: 0 auto;`);
+
+    // 2. The Title
+    clone.querySelectorAll('.post-title').forEach(el => el.setAttribute('style', `font-family: 'Varela Round', Helvetica, Arial, sans-serif; font-size: 2.5rem; color: ${colors.accentMain}; margin-bottom: 0.5rem; line-height: 1.2; font-weight: bold;`));
+
+    // 3. The Date/Meta
+    clone.querySelectorAll('.post-meta').forEach(el => el.setAttribute('style', `color: ${colors.textMeta}; font-size: 1rem; font-weight: 500; margin-bottom: 2.5rem; text-transform: uppercase; border-bottom: 2px dashed ${colors.border}; padding-bottom: 1rem;`));
+
+    // 4. Content Area
+    clone.querySelectorAll('.post-content').forEach(el => el.setAttribute('style', `font-size: 1.15rem; color: ${colors.textMain};`));
+
+    // 5. Headings inside the post
+    clone.querySelectorAll('.post-content h2, .post-content h3').forEach(el => el.setAttribute('style', `font-family: 'Varela Round', Helvetica, Arial, sans-serif; color: ${colors.accentTer}; font-size: 1.5rem; margin-top: 2.5rem; margin-bottom: 1rem; font-weight: bold;`));
+
+    // 6. Blockquotes
+    clone.querySelectorAll('.post-content blockquote').forEach(el => el.setAttribute('style', `margin: 2rem 0; padding: 1rem 2rem; border-left: 5px solid ${colors.accentSec}; background-color: ${colors.bg}; color: ${colors.accentTer}; border-radius: 8px; font-style: italic;`));
+
+    // 7. Images
+    clone.querySelectorAll('.post-content img').forEach(el => el.setAttribute('style', `max-width: 100%; border-radius: 12px; border: 3px solid ${colors.border}; display: block; margin: 2rem auto;`));
+
+    // 8. Text Links
+    clone.querySelectorAll('a').forEach(el => el.setAttribute('style', `color: ${colors.accentMain}; text-decoration: underline; font-weight: bold;`));
+
+    // 9. Horizontal Rules (if you use --- in markdown)
+    clone.querySelectorAll('.post-content hr').forEach(el => el.setAttribute('style', `border: 0; height: 2px; background-color: ${colors.accentMain}; margin: 2rem 0; opacity: 0.2;`));
+// ... [Keep everything above this exactly the same] ...
+
+    // --- CREATE THE EMAIL HEADER ---
+    const emailHeader = document.createElement('div');
+    emailHeader.setAttribute('style', `text-align: center; font-size: 0.9rem; color: ${colors.textMeta}; margin-bottom: 20px; font-family: 'Inter', Helvetica, Arial, sans-serif;`);
+    // window.location.href automatically grabs the current page URL
+    emailHeader.innerHTML = `
+        <a href="${window.location.href}" style="color: ${colors.accentMain}; text-decoration: none; font-weight: bold;">Read in browser</a> 
+        &nbsp;|&nbsp; 
+        <a href="YOUR_SUBSCRIBE_LINK" style="color: ${colors.accentMain}; text-decoration: none; font-weight: bold;">Subscribe to the Logbook</a>
+    `;
+
+    // --- CREATE THE EMAIL FOOTER (Optional but good practice) ---
+    const emailFooter = document.createElement('div');
+    emailFooter.setAttribute('style', `text-align: center; font-size: 0.85rem; color: ${colors.textMeta}; margin-top: 30px; border-top: 2px dashed ${colors.border}; padding-top: 20px; font-family: 'Inter', Helvetica, Arial, sans-serif;`);
+    // window.location.origin grabs your main homepage URL automatically
+    emailFooter.innerHTML = `
+        You are receiving this because you're part of my Logbook circle.<br>
+        <a href="${window.location.origin}" style="color: ${colors.accentMain}; text-decoration: none; margin-top: 10px; display: inline-block;">Return to the main collection</a>
+    `;
+
+    // Finally, wrap the Header, the Clone (Post), and the Footer in the body background
+    const emailWrapper = document.createElement('div');
+    emailWrapper.setAttribute('style', `background-color: ${colors.bg}; padding: 40px 20px; font-family: 'Inter', Helvetica, Arial, sans-serif;`);
+    
+    emailWrapper.appendChild(emailHeader);
+    emailWrapper.appendChild(clone);
+    emailWrapper.appendChild(emailFooter);
+
+    // Convert to Clipboard Item
+    const blob = new Blob([emailWrapper.outerHTML], { type: "text/html" });
+    const data = [new ClipboardItem({ "text/html": blob })];
+
+    try {
         await navigator.clipboard.write(data);
-        alert("Formatted HTML is now on your clipboard. Go to Gmail and Paste (Ctrl+V)!");
-      } catch (err) {
-        alert("Failed to copy. Make sure you are on HTTPS.");
-      }
-  });
+        alert(`Formatted for Gmail! The ${currentThemeName.toUpperCase()} theme, browser link, and subscribe button are baked in.`);
+    } catch (err) {
+        alert("Failed to copy. Ensure you are viewing the live HTTPS site, not a local file.");
+    }
+});
 </script>
 </body>
 </html>
