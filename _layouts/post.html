@@ -63,11 +63,7 @@
         <div class="post-content">
             {{ content }}
         </div>
-        <div class="newsletter-box" style="margin-top: 50px; padding: 30px; border: 2px solid var(--border-color); border-radius: 20px; background: var(--card-bg);">
-    <h3 style="margin-top: 0; color: var(--accent-main);">Join the Logbook Circle</h3>
-    <p style="font-size: 0.9rem; color: var(--text-meta);">I send these research logs and digital prints to a small circle. No spam, just history and art.</p>
-    <div class="ml-embedded" data-form="Ek5sAr"></div>
-    </div>
+
     </div>
 
     <script>
@@ -159,28 +155,21 @@ document.getElementById('email-copy-btn').addEventListener('click', async functi
 // ... [Keep everything above this exactly the same] ...
 
     // --- CREATE THE EMAIL HEADER ---
-    const emailHeader = document.createElement('div');
-    emailHeader.setAttribute('style', `text-align: center; font-size: 0.9rem; color: ${colors.textMeta}; margin-bottom: 20px; font-family: 'Inter', Helvetica, Arial, sans-serif;`);
-    // window.location.href automatically grabs the current page URL
-    emailHeader.innerHTML = `
-        <a href="${window.location.href}" style="color: ${colors.accentMain}; text-decoration: none; font-weight: bold;">Read in browser</a> 
-        &nbsp;|&nbsp; 
-        <a href="YOUR_SUBSCRIBE_LINK" style="color: ${colors.accentMain}; text-decoration: none; font-weight: bold;">Subscribe to the Logbook</a>
-    `;
+
 
     // --- CREATE THE EMAIL FOOTER (Optional but good practice) ---
     const emailFooter = document.createElement('div');
     emailFooter.setAttribute('style', `text-align: center; font-size: 0.85rem; color: ${colors.textMeta}; margin-top: 30px; border-top: 2px dashed ${colors.border}; padding-top: 20px; font-family: 'Inter', Helvetica, Arial, sans-serif;`);
     // window.location.origin grabs your main homepage URL automatically
     emailFooter.innerHTML = `
-        You are receiving this because you're part of my Logbook circle.<br>
+        Know someone who'd enjoy this? Send me their email and I'll add them to the circle (with a heads-up so they know it's from me).<br>
     `;
 
     // Finally, wrap the Header, the Clone (Post), and the Footer in the body background
     const emailWrapper = document.createElement('div');
     emailWrapper.setAttribute('style', `background-color: ${colors.bg}; padding: 40px 20px; font-family: 'Inter', Helvetica, Arial, sans-serif;`);
     
-    emailWrapper.appendChild(emailHeader);
+
     emailWrapper.appendChild(clone);
     emailWrapper.appendChild(emailFooter);
 
@@ -196,14 +185,6 @@ document.getElementById('email-copy-btn').addEventListener('click', async functi
     }
 });
 </script>
-    <!-- MailerLite Universal -->
-<script>
-    (function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
-    .push(arguments);},l=d.createElement(e),l.async=1,l.src=u,
-    n=d.getElementsByTagName(e)[0],n.parentNode.insertBefore(l,n);})
-    (window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
-    ml('account', '2287217');
-</script>
-<!-- End MailerLite Universal -->
+
 </body>
 </html>
