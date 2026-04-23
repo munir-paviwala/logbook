@@ -154,8 +154,9 @@ document.getElementById('email-copy-btn').addEventListener('click', async functi
     clone.querySelectorAll('.post-content hr').forEach(el => el.setAttribute('style', `border: 0; height: 2px; background-color: ${colors.accentMain}; margin: 2rem 0; opacity: 0.2;`));
 // ... [Keep everything above this exactly the same] ...
 
-    // --- CREATE THE EMAIL HEADER ---
-
+    const emailHeader = document.createElement('div');
+    emailHeader.setAttribute('style', `text-align: center; font-size: 0.9rem; color: ${colors.textMeta}; margin-bottom: 20px; font-family: 'Inter', Helvetica, Arial, sans-serif;`);
+    emailHeader.innerHTML = `<a href="${window.location.href}" style="color: ${colors.accentMain}; text-decoration: none; font-weight: bold;">Read in browser</a>`;
 
     // --- CREATE THE EMAIL FOOTER (Optional but good practice) ---
     const emailFooter = document.createElement('div');
@@ -169,7 +170,7 @@ document.getElementById('email-copy-btn').addEventListener('click', async functi
     const emailWrapper = document.createElement('div');
     emailWrapper.setAttribute('style', `background-color: ${colors.bg}; padding: 40px 20px; font-family: 'Inter', Helvetica, Arial, sans-serif;`);
     
-
+    emailWrapper.appendChild(emailHeader);
     emailWrapper.appendChild(clone);
     emailWrapper.appendChild(emailFooter);
 
@@ -179,7 +180,7 @@ document.getElementById('email-copy-btn').addEventListener('click', async functi
 
     try {
         await navigator.clipboard.write(data);
-        alert(`Formatted for Gmail! The ${currentThemeName.toUpperCase()} theme, browser link, and subscribe button are baked in.`);
+        alert(`Formatted for Gmail! The ${currentThemeName.toUpperCase()} theme and browser link are baked in.`);
     } catch (err) {
         alert("Failed to copy. Ensure you are viewing the live HTTPS site, not a local file.");
     }
