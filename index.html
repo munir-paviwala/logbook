@@ -3,15 +3,19 @@ layout: default
 ---
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Logbook - Archive</title>
-    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
     <style>
         /* --- CORE COLOR PALETTES & THEME LOGIC --- */
-        :root { transition: all 0.3s ease; }
+        :root {
+            transition: all 0.3s ease;
+        }
 
         [data-theme="gulabi"] {
             --bg-color: #fdfaf3;
@@ -46,10 +50,20 @@ layout: default
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23e8e8e8' fill-opacity='0.1' d='M1 3h1v1H1V3zm2-2h1v1H2V1z'%3E%3C/path%3E%3C/svg%3E");
         }
 
-        .container { max-width: 800px; margin: 0 auto; }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
 
-        h1, h2, h3, h4 { font-family: 'Varela Round', sans-serif; font-weight: 600; margin-top: 1.5rem; }
-        
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Varela Round', sans-serif;
+            font-weight: 600;
+            margin-top: 1.5rem;
+        }
+
         h1 {
             font-size: 3.5rem;
             color: var(--accent-main);
@@ -60,14 +74,18 @@ layout: default
         /* --- SNEAKY THEME TOGGLE (Hover to reveal) --- */
         .theme-hover-area {
             position: fixed;
-            top: 0; right: 0;
+            top: 0;
+            right: 0;
             padding: 1.5rem;
             z-index: 1000;
-            opacity: 0; /* Invisible until hover */
+            opacity: 0;
+            /* Invisible until hover */
             transition: opacity 0.3s ease;
         }
-        
-        .theme-hover-area:hover { opacity: 1; }
+
+        .theme-hover-area:hover {
+            opacity: 1;
+        }
 
         .theme-toggle-container {
             display: flex;
@@ -76,24 +94,43 @@ layout: default
             padding: 8px;
             border-radius: 30px;
             border: 2px solid var(--border-color);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
         .theme-btn {
-            width: 20px; height: 20px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             border: none;
             cursor: pointer;
             transition: transform 0.2s;
         }
 
-        .theme-btn.gulabi-btn { background-color: #b22e5b; }
-        .theme-btn.pistachio-btn { background-color: #4a9e6b; }
-        .theme-btn:hover { transform: scale(1.3); }
+        .theme-btn.gulabi-btn {
+            background-color: #b22e5b;
+        }
+
+        .theme-btn.pistachio-btn {
+            background-color: #4a9e6b;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.3);
+        }
 
         /* --- POST COLLECTION STYLING --- */
-        .sub-header { color: var(--text-meta); margin-bottom: 3rem; font-size: 1.1rem; }
-        .post-list { list-style: none; padding: 0; margin: 0; }
+        .sub-header {
+            color: var(--text-meta);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .post-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
         .post-item {
             background: var(--card-bg);
             margin-bottom: 2.5rem;
@@ -102,35 +139,121 @@ layout: default
             border: 2px solid var(--border-color);
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .post-item:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0,0,0,0.04); }
-        .post-title { margin: 0 0 0.5rem 0; font-size: 2.2rem; line-height: 1.2; }
-        .post-title a { color: var(--accent-main); text-decoration: none; }
-        .post-title a:hover { color: var(--accent-tertiary); }
-        .post-meta { color: var(--text-meta); font-size: 0.95rem; font-weight: 500; margin-bottom: 1.5rem; text-transform: uppercase; }
-        
+
+        .post-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.04);
+        }
+
+        .post-title {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.2rem;
+            line-height: 1.2;
+        }
+
+        .post-title a {
+            color: var(--accent-main);
+            text-decoration: none;
+        }
+
+        .post-title a:hover {
+            color: var(--accent-tertiary);
+        }
+
+        .post-meta {
+            color: var(--text-meta);
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+
         /* CONTENT STYLING */
-        .post-content { font-size: 1.1rem; color: var(--text-main); }
-        .post-content h2, .post-content h3 { color: var(--accent-tertiary); font-size: 1.6rem; }
-        .post-content blockquote { margin: 2rem 0; padding: 1rem 2rem; border-left: 5px solid var(--accent-secondary); background-color: var(--bg-color); color: var(--accent-tertiary); border-radius: 8px; font-style: italic; }
-        
+        .post-content {
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+
+        .post-content h2,
+        .post-content h3 {
+            color: var(--accent-tertiary);
+            font-size: 1.6rem;
+        }
+
+        .post-content blockquote {
+            margin: 2rem 0;
+            padding: 1rem 2rem;
+            border-left: 5px solid var(--accent-secondary);
+            background-color: var(--bg-color);
+            color: var(--accent-tertiary);
+            border-radius: 8px;
+            font-style: italic;
+        }
+
         /* Styled Macros output */
-        .post-content figure { margin: 2rem 0; text-align: center; }
-        .post-content img { max-width: 100%; border-radius: 12px; border: 3px solid var(--border-color); display: block; margin: 0 auto; }
-        .post-content figcaption { margin-top: 0.5rem; font-size: 0.95rem; color: var(--text-meta); font-style: italic; }
-        .post-content iframe { border-radius: 12px; display: block; margin: 0 auto; border: none; max-width: 100%; }
-        .post-content hr { border: 0; height: 2px; background-image: linear-gradient(to right, rgba(0,0,0,0), var(--accent-main), rgba(0,0,0,0)); margin: 2rem 0; }
+        .post-content figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .post-content img {
+            max-width: 100%;
+            border-radius: 12px;
+            border: 3px solid var(--border-color);
+            display: block;
+            margin: 0 auto;
+        }
+
+        .post-content figcaption {
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+            color: var(--text-meta);
+            font-style: italic;
+        }
+
+        .post-content iframe {
+            border-radius: 12px;
+            display: block;
+            margin: 0 auto;
+            border: none;
+            max-width: 100%;
+        }
+
+        .post-content hr {
+            border: 0;
+            height: 2px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0), var(--accent-main), rgba(0, 0, 0, 0));
+            margin: 2rem 0;
+        }
 
         /* --- MOBILE RESPONSIVENESS --- */
         @media (max-width: 768px) {
-            body { padding: 1rem; }
-            h1 { font-size: 2.5rem; }
-            .post-item { padding: 1.5rem; }
+            body {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .post-item {
+                padding: 1.5rem;
+            }
+
             /* Make toggle slightly visible on mobile so you know it's there */
-            .theme-hover-area { opacity: 0.5; padding: 1rem; }
-            .theme-hover-area:hover, .theme-hover-area:active { opacity: 1; }
+            .theme-hover-area {
+                opacity: 0.5;
+                padding: 1rem;
+            }
+
+            .theme-hover-area:hover,
+            .theme-hover-area:active {
+                opacity: 1;
+            }
         }
     </style>
 </head>
+
 <body data-theme="gulabi">
 
     <div class="theme-hover-area" title="Change Theme">
@@ -142,7 +265,8 @@ layout: default
 
     <div class="container">
         <h1>The Log</h1>
-        <p class="sub-header">Musings on Economics, history, art, aesthetics, moral philosophy, energy and songs! Always a song recommendation.</p>
+        <p class="sub-header">Random thoughts on economics, history, music, and everything in between! For friends only
+            (but you can read if you want to).</p>
 
         <ul class="post-list">
             {% for post in site.posts %}
@@ -171,4 +295,5 @@ layout: default
         })();
     </script>
 </body>
+
 </html>
